@@ -133,8 +133,7 @@ class ProductDataListBody extends StatelessWidget {
                             bloc.add(GetProductListEvent());
                           },
                           child: GridView.count(
-                            childAspectRatio:
-                              163/229,
+                            childAspectRatio: 163 / 229,
                             crossAxisCount: 2,
                             shrinkWrap: true,
                             children: List.generate(state.list.length, (index) {
@@ -164,7 +163,6 @@ class ProductItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       child: Container(
-        height: 220,
         padding: EdgeInsets.all(12),
         margin: EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -175,10 +173,12 @@ class ProductItemWidget extends StatelessWidget {
               children: [
                 Hero(
                   tag: "image${index}",
-                  child: Container(
+                  child:AspectRatio(
+                    aspectRatio: 1.2,
+                    child: Container(
                       margin: EdgeInsets.only(top: 16),
-                      height: 125,
                       width: 200,
+                      height: 125,
                       child: CachedNetworkImage(
                         imageUrl: data.image,
                         placeholder: (context, url) => Image.asset(
@@ -188,7 +188,7 @@ class ProductItemWidget extends StatelessWidget {
                             AppImages.ic_placeholder,
                             package: AppImages.package),
                       )),
-                ),
+                )),
                 (data.isNewProduct)
                     ? Positioned(
                         right: 0,
@@ -221,20 +221,21 @@ class ProductItemWidget extends StatelessWidget {
                             decoration: TextDecoration.none,
                           ),
                         ))))),
-            Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(top: 8),
-                child: Hero(
-                  tag: "price${index}",
-                  child: Text(
-                    data.price.toStringAsFixed(2),
-                    style: TextStyle(
-                        decoration: TextDecoration.none,
-                        color: AppColors.primary,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ))
+            Expanded(
+                child: Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(top: 8),
+                    child: Hero(
+                      tag: "price${index}",
+                      child: Text(
+                        data.price.toStringAsFixed(2),
+                        style: TextStyle(
+                            decoration: TextDecoration.none,
+                            color: AppColors.primary,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    )))
           ],
         ),
       ),
