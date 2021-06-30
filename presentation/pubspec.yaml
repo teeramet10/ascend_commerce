@@ -15,6 +15,8 @@ dependencies:
   flutter_bloc: ^7.0.1
   equatable: ^2.0.0
   cached_network_image : ^3.0.0
+  flutter_staggered_grid_view: ^0.4.0
+
 
   ascend_commerce:
     path: ../../ascend_commerce

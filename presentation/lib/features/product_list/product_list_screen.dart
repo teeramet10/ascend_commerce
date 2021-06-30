@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get_it/get_it.dart';
 import 'package:presentation/common/app_colors.dart';
 import 'package:presentation/common/navigation/routes.dart';
@@ -29,6 +30,12 @@ class ProductListScreenState extends State<ProductListScreen> {
   var bloc = sl<ProductListBloc>();
 
   @override
+  void dispose() {
+    super.dispose();
+    bloc.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => bloc..add(GetProductListEvent()),
@@ -41,24 +48,24 @@ class ProductListScreenState extends State<ProductListScreen> {
                   title: "Product",
                 ),
                 body: Container(
-                    alignment: Alignment.center,
-                    color: AppColors.background,
-                    child: Stack(
-                      children: [ProductListBody()],
-                    )),
+                  alignment: Alignment.center,
+                  color: AppColors.background,
+                  child: ProductListBody(),
+                ),
               );
             })));
   }
 }
 
 class ProductListBody extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of<ProductListBloc>(context);
     return BlocBuilder<ProductListBloc, ProductListState>(
         builder: (context, state) {
-     if (state is NoDataState) {
+      if (state is LoadingState) {
+        return LoadingIndicator();
+      } else if (state is NoDataState) {
         return EmptyStateWidget(
           onTap: () {
             bloc.add(GetProductListEvent());
@@ -82,8 +89,8 @@ class ProductListBody extends StatelessWidget {
 }
 
 class ProductDataListBody extends StatelessWidget {
-  void onTapListItem(BuildContext context, ProductModel data , int index) {
-    var arg = ProductDetailScreenArg(data: data,index: index);
+  void onTapListItem(BuildContext context, ProductModel data, int index) {
+    var arg = ProductDetailScreenArg(data: data, index: index);
     GetIt.I<ScreenNavigationService>().navigateTo(Routes.product_detail,
         arguments: arg, duration: Duration(milliseconds: 1000));
   }
@@ -94,44 +101,53 @@ class ProductDataListBody extends StatelessWidget {
 
     return BlocBuilder<ProductListBloc, ProductListState>(
         builder: (context, state) {
+      List<Widget> _buildGrid() {
+        List<Widget> list = [];
+        for (int i = 0; i < state.list.length; i++) {
+          list.add(ProductItemWidget(
+            data: state.list[i],
+            index: i,
+            onTap: (data) {
+              onTapListItem(context, state.list[i], i);
+            },
+          ));
+        }
+        return list;
+      }
+
       return Container(
           alignment: Alignment.center,
           margin: EdgeInsets.all(8),
-          child: Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Start picking your treats",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(height: 16),
-                Flexible(
-                    child: Container(
-                        child: RefreshIndicator(
-                            onRefresh: () async {
-                              bloc.add(GetProductListEvent());
-                            },
-                            child: GridView.count(
-                              childAspectRatio: MediaQuery.of(context)
-                                      .size
-                                      .width /
-                                  (MediaQuery.of(context).size.height / 1.60),
-                              crossAxisCount: 2,
-                              shrinkWrap: true,
-                              children:
-                                  List.generate(state.list.length, (index) {
-                                return ProductItemWidget(
-                                  data: state.list[index],
-                                  index: index,
-                                  onTap: (data) {
-                                    onTapListItem(context, data,index);
-                                  },
-                                );
-                              }),
-                            )))),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Start picking your treats",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+              SizedBox(height: 16),
+              Flexible(
+                  child: Container(
+                      child: RefreshIndicator(
+                          onRefresh: () async {
+                            bloc.add(GetProductListEvent());
+                          },
+                          child: GridView.count(
+                            childAspectRatio:
+                              163/229,
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            children: List.generate(state.list.length, (index) {
+                              return ProductItemWidget(
+                                data: state.list[index],
+                                index: index,
+                                onTap: (data) {
+                                  onTapListItem(context, data, index);
+                                },
+                              );
+                            }),
+                          ))))
+            ],
           ));
     });
   }
@@ -147,8 +163,8 @@ class ProductItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: Expanded(
-          child: Container(
+      child: Container(
+        height: 220,
         padding: EdgeInsets.all(12),
         margin: EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -163,15 +179,15 @@ class ProductItemWidget extends StatelessWidget {
                       margin: EdgeInsets.only(top: 16),
                       height: 125,
                       width: 200,
-                      child:
-                      CachedNetworkImage(
+                      child: CachedNetworkImage(
                         imageUrl: data.image,
-                        placeholder: (context,url) => Image.asset(AppImages.ic_placeholder,
-                              package: AppImages.package),
-                        errorWidget: (context,url,error) => Image.asset(AppImages.ic_placeholder,
-                          package: AppImages.package),
-                      )
-                  ),
+                        placeholder: (context, url) => Image.asset(
+                            AppImages.ic_placeholder,
+                            package: AppImages.package),
+                        errorWidget: (context, url, error) => Image.asset(
+                            AppImages.ic_placeholder,
+                            package: AppImages.package),
+                      )),
                 ),
                 (data.isNewProduct)
                     ? Positioned(
@@ -195,12 +211,15 @@ class ProductItemWidget extends StatelessWidget {
                     alignment: Alignment.bottomLeft,
                     child: Hero(
                         tag: "title${index}",
-                        child:Container(child: Text(
-
+                        child: Container(
+                            child: Text(
                           data.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 13,  decoration: TextDecoration.none,),
+                          style: TextStyle(
+                            fontSize: 13,
+                            decoration: TextDecoration.none,
+                          ),
                         ))))),
             Container(
                 alignment: Alignment.centerLeft,
@@ -210,7 +229,7 @@ class ProductItemWidget extends StatelessWidget {
                   child: Text(
                     data.price.toStringAsFixed(2),
                     style: TextStyle(
-                      decoration: TextDecoration.none,
+                        decoration: TextDecoration.none,
                         color: AppColors.primary,
                         fontSize: 17,
                         fontWeight: FontWeight.w700),
@@ -218,7 +237,7 @@ class ProductItemWidget extends StatelessWidget {
                 ))
           ],
         ),
-      )),
+      ),
       onTap: () {
         if (onTap != null) onTap!(data);
       },

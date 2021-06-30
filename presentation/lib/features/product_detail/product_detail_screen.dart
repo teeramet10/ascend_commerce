@@ -31,6 +31,13 @@ class ProductDetailScreenState extends State<ProductDetailScreen> {
   var bloc = sl<ProductDetailBloc>();
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    bloc.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => bloc
@@ -68,9 +75,7 @@ class ProductDetailBody extends StatelessWidget {
     var bloc = BlocProvider.of<ProductDetailBloc>(context);
     return BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
-      if (state is LoadingState) {
-        return LoadingIndicator();
-      } else if (state is NoDataState) {
+       if (state is NoDataState) {
         return EmptyStateWidget(
           onTap: () {
             bloc.add(GetProductDetailEvent());
@@ -106,7 +111,7 @@ class ProductDetailContent extends StatelessWidget {
         builder: (context, state) {
       return Container(
         margin: EdgeInsets.all(16),
-        child: Column(
+        child: SingleChildScrollView(child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -170,7 +175,7 @@ class ProductDetailContent extends StatelessWidget {
             )
           ],
         ),
-      );
+      ));
     });
   }
 }
