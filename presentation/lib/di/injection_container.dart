@@ -7,7 +7,7 @@ import 'package:domain/usecase/get_product_detail_usecase.dart';
 import 'package:domain/usecase/get_product_list_usecase.dart';
 import 'package:data/repositories/product_repository_impl.dart';
 import 'package:data/network_info.dart';
-import 'package:data/datasource/product/product_datasource.dart';
+import 'package:data/datasource/product/product_remote_datasource.dart';
 import 'package:data/datasource/product/product_remote_datasource_impl.dart';
 import 'package:data/http_manager.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';

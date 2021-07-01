@@ -19,23 +19,22 @@ class ProductDetailState extends Equatable {
 class LoadingState extends ProductDetailState {
   final ProductModel? data;
 
-  const LoadingState(this.data):super(data: data);
+  const LoadingState({this.data}):super(data: data);
 }
 
 class ErrorState extends ProductDetailState {
   final ProductModel? data;
 
-  const ErrorState(this.data):super(data: data);
+  const ErrorState({this.data}):super(data: data);
 }
 
 class NetworkErrorState extends ProductDetailState {
   final ProductModel? data;
 
-  const NetworkErrorState(this.data):super(data: data);
+  const NetworkErrorState({this.data}):super(data: data);
 }
 
-class NoDataState extends ProductDetailState {
-  final ProductModel? data;
+class NoDataIDState extends ProductDetailState {
 
-  const NoDataState(this.data):super(data: data);
+  const NoDataIDState();
 }

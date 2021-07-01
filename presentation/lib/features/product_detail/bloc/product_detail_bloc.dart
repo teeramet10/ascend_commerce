@@ -24,30 +24,26 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
 
   Stream<ProductDetailState> initial(
       ProductDetailState state, InitialState event) async* {
-    yield state.copyWith(data:event.data);
+    yield state.copyWith(data: event.data);
   }
 
   Stream<ProductDetailState> getProductDetail(
       ProductDetailState state, GetProductDetailEvent event) async* {
     try {
       int? id = state.data?.id;
-      if(state.data?.id == null){
-        yield NoDataState(state.data);
+      if (state.data?.id == null) {
+        yield NoDataIDState();
         return;
       }
-      yield ProductDetailState(data:state.data);
+      yield LoadingState(data: state.data);
       var response = await getProductDetailUseCase
           .call(GetProductDetailRequestModel(id: id!));
-      if (response.data != null) {
-        yield ProductDetailState(data: response.data);
-      } else {
-        yield ProductDetailState(data:state.data);
-      }
+      yield ProductDetailState(data: response.data);
     } on ServiceException catch (error) {
       if (error.message == ServiceException.NETWORK_DISCONNECTED.message) {
-        yield NetworkErrorState(state.data);
+        yield NetworkErrorState(data: state.data);
       } else
-        yield  ProductDetailState(data:state.data);
+        yield ErrorState(data: state.data);
     }
   }
 }

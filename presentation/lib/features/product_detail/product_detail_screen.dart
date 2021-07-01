@@ -32,7 +32,6 @@ class ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     bloc.close();
   }
@@ -75,10 +74,10 @@ class ProductDetailBody extends StatelessWidget {
     var bloc = BlocProvider.of<ProductDetailBloc>(context);
     return BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
-       if (state is NoDataState) {
+       if (state is NoDataIDState) {
         return EmptyStateWidget(
           onTap: () {
-            bloc.add(GetProductDetailEvent());
+            GetIt.I<ScreenNavigationService>().navigateBack();
           },
         );
       } else if (state is NetworkErrorState) {
@@ -87,10 +86,6 @@ class ProductDetailBody extends StatelessWidget {
             bloc.add(GetProductDetailEvent());
           },
         );
-      } else if (state is ErrorState) {
-        return ErrorStateWidget(onTap: () {
-          bloc.add(GetProductDetailEvent());
-        });
       } else {
         return ProductDetailContent(
           index: index,

@@ -4,7 +4,7 @@ import 'package:domain/model/product_model.dart';
 import 'package:domain/repositories/product_repository.dart';
 import 'package:domain/usecase/get_product_detail_usecase.dart';
 import 'package:domain/usecase/get_product_list_usecase.dart';
-import 'package:data/datasource/product/product_datasource.dart';
+import 'package:data/datasource/product/product_remote_datasource.dart';
 
 class ProductRepositoryImpl extends ProductRepository {
   ProductRepositoryImpl({required this.remoteDataSource, required this.networkInfo});

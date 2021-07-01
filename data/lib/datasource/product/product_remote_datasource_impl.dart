@@ -6,7 +6,7 @@ import 'package:domain/usecase/get_product_list_usecase.dart';
 import 'package:http_parser/src/media_type.dart';
 import '../../http_manager.dart';
 import '../base_datasource.dart';
-import 'product_datasource.dart';
+import 'product_remote_datasource.dart';
 
 class ProductRemoteDataSourceImpl extends BaseDataSource
     implements ProductRemoteDataSource {
