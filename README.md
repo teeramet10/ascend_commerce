@@ -36,7 +36,10 @@ fvm flutter run --no-sound-null-safety
 ```
 --no-sound-null-safety  
 ```
-
+**Run unit tests**
+```
+fvm flutter test --no-sound-null-safety
+```
 
 **Screenshot**
 
