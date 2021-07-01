@@ -25,9 +25,16 @@ fvm flutter pub get
 
 Open simulator
 
-**Run**
+**Run Using command**
 ```
-fvm flutter run lib/main.dart --no-sound-null-safety
+fvm flutter run --no-sound-null-safety
+```
+
+**Android studio**
+=> Go to Edit configuration
+=> add command below on "Additional run args"
+```
+--no-sound-null-safety  
 ```
 
 
